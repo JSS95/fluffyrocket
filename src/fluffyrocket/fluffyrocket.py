@@ -57,10 +57,16 @@ class FluffyRocket(MiniRocketBase):
         random_state=None,
     ):
         super().__init__(num_features, max_dilations_per_kernel, random_state)
+        assert sharpness > 0, "Sharpness must be positive."
+        log_sharpness = torch.log(torch.tensor(sharpness))  # Ensure positivity
         if learnable:
-            self.sharpness = torch.nn.Parameter(torch.tensor(sharpness))
+            self.log_sharpness = torch.nn.Parameter(log_sharpness)
         else:
-            self.sharpness = sharpness
+            self.register_buffer("log_sharpness", log_sharpness)
+
+    @property
+    def sharpness(self):
+        return torch.exp(self.log_sharpness)
 
     def ppv(self, x, biases):
         return torch.sigmoid(self.sharpness * (x - biases)).mean(1)
