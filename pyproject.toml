@@ -11,7 +11,7 @@ authors = [
 description = "PyTorch implementation of MiniRocket with soft PPV"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
+license = "GPL-3.0"
 license-files = [
     "LICENSE",
 ]
@@ -28,6 +28,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "numba",
     "torch",
 ]
 
@@ -38,6 +39,7 @@ source = "https://github.com/JSS95/fluffyrocket"
 [project.optional-dependencies]
 test = [
     "pytest",
+    "aeon",
 ]
 dev = [
     "flake8",
@@ -49,8 +51,12 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.black]
+exclude="src/fluffyrocket/_minirocket.py"
+
 [tool.isort]
 profile = "black"
+skip = ["src/fluffyrocket/_minirocket.py"]
 
 [tool.pytest.ini_options]
 doctest_optionflags = [
