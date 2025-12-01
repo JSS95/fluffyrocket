@@ -2,6 +2,7 @@
 
 This example is for demonstrating that FluffyRocket can be updated end-to-end
 with a ridge classifier using backpropagation, not for performance.
+When num_features is large, it is advisable to run in gpu environment.
 
 This does not support mini-batch training because the closed-form solution of ridge
 classifier requires all data at once. As recommended by the original paper,
@@ -77,5 +78,6 @@ for i in range(EPOCH):
         test_output = model(X_test)
         test_loss = loss_fn(test_output, y_test)
     print(
-        f"Epoch {i+1}, Sharpness: {model[0].sharpness},  Test loss: {test_loss.item()}"
+        f"Epoch {i+1}, Sharpness: {model[0].sharpness},  Test loss: {test_loss.item()}",
+        flush=True,
     )
