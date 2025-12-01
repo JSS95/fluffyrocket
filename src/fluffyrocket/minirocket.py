@@ -1,5 +1,8 @@
 """PyTorch implementation of the original MiniRocket with hard PPV."""
 
+from itertools import combinations
+
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.nn import Module
@@ -9,6 +12,11 @@ from ._minirocket import fit as _fit
 __all__ = [
     "MiniRocket",
 ]
+
+
+_INDICES = np.array(list(combinations(np.arange(9), 3)), dtype=np.int32)
+_KERNELS = np.full((84, 1, 9), -1.0, dtype=np.float32)
+_KERNELS[np.arange(84)[:, np.newaxis], 0, _INDICES] = 2.0
 
 
 class MiniRocket(Module):
@@ -56,6 +64,8 @@ class MiniRocket(Module):
         self.max_dilations_per_kernel = max_dilations_per_kernel
         self.random_state = random_state
 
+        self.register_buffer("kernels", torch.from_numpy(_KERNELS))
+
     def fit(self, X, y=None):
         """Fit dilation and biases.
 
@@ -94,11 +104,7 @@ class MiniRocket(Module):
     def forward(self, x):
         _, num_channels, _ = x.shape
 
-        indices = torch.combinations(torch.arange(9, device=x.device), 3)
-        kernels = torch.full((84, 1, 9), -1.0, device=x.device)
-        for i in range(84):
-            kernels[i, 0, indices[i]] = 2.0
-        kernels = kernels.repeat(num_channels, 1, 1)
+        kernels = self.kernels.repeat(num_channels, 1, 1)
 
         features = []
         feature_index_start = 0
