@@ -64,8 +64,6 @@ class MiniRocket(Module):
         self.max_dilations_per_kernel = max_dilations_per_kernel
         self.random_state = random_state
 
-        self.register_buffer("kernels", torch.from_numpy(_KERNELS))
-
     def fit(self, X, y=None):
         """Fit dilation and biases.
 
@@ -79,6 +77,10 @@ class MiniRocket(Module):
         -------
         self
         """
+        _, num_channels, _ = X.shape
+        kernels = torch.from_numpy(_KERNELS).repeat(num_channels, 1, 1)
+        self.register_buffer("kernels", kernels)
+
         (
             num_channels_per_combination,
             channel_indices,
@@ -104,8 +106,6 @@ class MiniRocket(Module):
     def forward(self, x):
         _, num_channels, _ = x.shape
 
-        kernels = self.kernels.repeat(num_channels, 1, 1)
-
         features = []
         feature_index_start = 0
         combination_index = 0
@@ -117,7 +117,7 @@ class MiniRocket(Module):
             num_features_this_dilation = self.num_features_per_dilation[i].item()
 
             C = F.conv1d(
-                x, kernels, padding=padding, dilation=dilation, groups=num_channels
+                x, self.kernels, padding=padding, dilation=dilation, groups=num_channels
             )
             C = C.view(-1, num_channels, 84, C.shape[-1])
 
