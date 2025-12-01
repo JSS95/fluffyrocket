@@ -5,4 +5,6 @@ max-line-length = 88
 extend-ignore =
     E203,
     D,
-exclude = src/fluffyrocket/_minirocket.py
+exclude =
+    .github,
+    src/fluffyrocket/_minirocket.py
