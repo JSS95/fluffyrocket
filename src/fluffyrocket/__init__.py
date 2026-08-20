@@ -1,9 +1,7 @@
-"""PyTorch implementation of MiniRocket with soft PPV."""
+"""PyTorch implementation of Rocket-variants with soft PPV."""
 
-from .fluffyrocket import FluffyRocket
-from .minirocket import MiniRocket
+from .minirocket import FluffyRocketFeatures
 
 __all__ = [
-    "MiniRocket",
-    "FluffyRocket",
+    "FluffyRocketFeatures",
 ]
