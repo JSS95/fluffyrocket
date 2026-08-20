@@ -1,4 +1,4 @@
-# FluffyRocket - Soft and Mini Rocket
+# FluffyRocket - Soft MiniRocket
 
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/fluffyrocket.svg)](https://pypi.python.org/pypi/fluffyrocket/)
 [![PyPI Version](https://img.shields.io/pypi/v/fluffyrocket.svg)](https://pypi.python.org/pypi/fluffyrocket/)
@@ -6,7 +6,7 @@
 [![CI](https://github.com/JSS95/fluffyrocket/actions/workflows/ci.yml/badge.svg)](https://github.com/JSS95/fluffyrocket/actions/workflows/ci.yml)
 [![CD](https://github.com/JSS95/fluffyrocket/actions/workflows/cd.yml/badge.svg)](https://github.com/JSS95/fluffyrocket/actions/workflows/cd.yml)
 
-Neural-network based MiniRocket with soft PPV.
+Neural-network based MiniRocket (and other Rocket variants) with soft PPV.
 
 ## Related projects
 
@@ -14,4 +14,4 @@ Neural-network based MiniRocket with soft PPV.
 - [MiniRocket](https://github.com/angus924/minirocket) : Original MiniRocket, developed by the author of Rocket with intention to replace it.
 - [sktime](https://github.com/sktime/sktime), [aeon](https://github.com/aeon-toolkit/aeon): Scikit-Learn compatible toolkits which support MiniRocket.
 - [TorchRocket](https://github.com/alexander-milne/gpu_rocket) : Neural-network based Rocket with soft PPV.
-- [tsai](https://github.com/timeseriesAI/tsai) : Provides neural-network based MiniRocket, but without soft PPV.
+- [tsai](https://github.com/timeseriesAI/tsai) : Provides neural-network based MiniRocket, but without soft PPV. FluffyRocket extends this project.

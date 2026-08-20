@@ -1,45 +1,40 @@
-"""PyTorch implementation of the original MiniRocket with hard PPV."""
+"""Minirocket with soft PPV."""
 
-from .base import MiniRocketBase
+import torch
+from tsai.models.MINIROCKET_Pytorch import MiniRocketFeatures
 
 __all__ = [
-    "MiniRocket",
+    "FluffyRocketFeatures",
 ]
 
 
-class MiniRocket(MiniRocketBase):
-    """PyTorch MiniRocket [1]_ with hard PPV.
+class FluffyRocketFeatures(MiniRocketFeatures):
+    """MiniRocket with soft PPV.
 
-    This class aims to exactly reproduce transformation result from
-    the original MiniRocket model.
-
-    Parameters
-    ----------
-    num_features : int, default=10,000
-    max_dilations_per_kernel : int, default=32
-    random_state : int, default=None
-
-    References
-    ----------
-    .. [1] Dempster, Angus, Daniel F. Schmidt, and Geoffrey I. Webb.
-       "Minirocket: A very fast (almost) deterministic transform for
-       time series classification." Proceedings of the 27th ACM SIGKDD
-       conference on knowledge discovery & data mining. 2021.
-
-    Examples
-    --------
-    >>> from aeon.datasets import load_unit_test
-    >>> import torch
-    >>> from fluffyrocket import MiniRocket
-    >>> from fluffyrocket._minirocket import fit, transform
-    >>> X, _ = load_unit_test()
-    >>> X = X.astype("float32")
-    >>> trf_original = transform(X, fit(X, num_features=84, seed=42))
-    >>> minirocket = MiniRocket(num_features=84, random_state=42).fit(X)
-    >>> trf_torch = minirocket(torch.from_numpy(X))
-    >>> torch.allclose(torch.from_numpy(trf_original), trf_torch)
-    True
+    The *sharpness* parameter controls the sharpness of the sigmoid function
+    used to compute the soft PPV. ``None`` indicates infinite sharpness, i.e.,
+    the original hard PPV.
     """
 
-    def ppv(self, x, biases):
-        return (x > biases).float().mean(1)
+    def __init__(
+        self,
+        c_in,
+        seq_len,
+        num_features=10_000,
+        max_dilations_per_kernel=32,
+        random_state=None,
+        sharpness=None,
+    ):
+        super().__init__(
+            c_in, seq_len, num_features, max_dilations_per_kernel, random_state
+        )
+        self.sharpness = sharpness
+
+    def _get_PPVs(self, C, bias):
+        """Return hard or differentiable soft proportions of positive values."""
+        if self.sharpness is None:
+            return super()._get_PPVs(C, bias)
+
+        C = C.unsqueeze(-1)
+        bias = bias.view(1, bias.shape[0], 1, bias.shape[1])
+        return torch.sigmoid(self.sharpness * (C - bias)).mean(2).flatten(1)
